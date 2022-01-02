@@ -34,6 +34,7 @@ class Board
       end
       }
       print "\n"}
+    print "0 ABCDEFGH\n"
   end
 
 
@@ -47,7 +48,7 @@ class Board
   end
 
   def try_move(current,target)
-    if same_owner(current,target); return false; end
+    if same_owner(current,target); return false; end    
     return @board[current[0]][current[1]].valid_moves(current,target)
   end
 
