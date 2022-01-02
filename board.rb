@@ -12,12 +12,14 @@ class Board
   end
 
   def swap_players
+    @current_player=other_player()
+  end
+
+  def other_player
     if @current_player==@black
-      @current_player=@white
       return @white
     else
       @current_player=@black
-      return @black
     end
   end
 
@@ -48,6 +50,7 @@ class Board
       [2,5].each {|j| @board[i][j]=Bishop.new(@current_player)}
       @board[i][3]=Queen.new(@current_player)
       @board[i][4]=King.new(@current_player)
+      @current_player.king=@board[i][4]
       }
     
     [1,6].each {|i|
@@ -60,6 +63,7 @@ end
 
 class Player
   attr_reader :color,:board
+  attr_accessor :king
   def initialize(color_code,board)
     @color=color_code
     @board=board
