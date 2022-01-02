@@ -34,12 +34,7 @@ class Knight < Piece
   end
 end
 
-class Queen < Piece
-  def initialize(owner)
-    super(owner)
-    @icon="Q"
-  end
-end
+
 
 class King < Piece
   def initialize(owner)
@@ -130,4 +125,15 @@ module RookMoves
     end
     return true
   end
+end
+
+class Queen < Piece
+  include RookMoves
+  include BishopMoves
+  def initialize(owner)
+    super(owner)
+    @icon="Q"
+  end
+  def valid_moves(current,target)
+    return rook_moves(current,target)||(bishop_moves(current,target))
 end
