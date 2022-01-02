@@ -84,4 +84,8 @@ end
 
 board=Board.new
 board.draw_board
-print board.try_move([7,2],[6,3])
+puts board.try_move([7,2],[6,3])
+puts board.try_move([7,0],[4,0])
+puts board.try_move([7,0],[4,4])
+puts board.try_move([7,0],[7,1])
+

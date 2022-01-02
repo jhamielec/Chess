@@ -55,13 +55,8 @@ class King < Piece
   end
 end
 
-class Bishop < Piece
-  def initialize(owner)
-    super(owner)
-    @icon="B"
-  end
-
-  def valid_moves(current,target)
+module BishopMoves
+  def bishop_moves(current,target)
     x_diff=current[0]-target[0]
     y_diff=current[1]-target[1]
     if ((x_diff).abs)!=(y_diff).abs
@@ -69,24 +64,30 @@ class Bishop < Piece
     end
     i=1
     j=1
-    if x_diff>0
-      i=-1
-    end
-    if y_diff>0
-      j=-1
-    end
-    start=1
-    while start<x_diff.abs
-      if @owner.board[current[0]+i*start][current[1]+j*start]!='#'
+    if x_diff>0;i=-1; end
+    if y_diff>0; j=-1; end
+    pos=1
+    while pos<x_diff.abs
+      if @owner.board[current[0]+i*pos][current[1]+j*pos]!='#'
         return false
       end
-      start+=i
+      pos+=i
     end
     true
   end
-
 end
 
+class Bishop < Piece
+  include BishopMoves
+  def initialize(owner)
+    super(owner)
+    @icon="B"
+  end
+
+  def valid_moves(current,target)
+    return bishop_moves(current,target)
+  end
+end
 
 class Pawn < Piece
   def initialize(owner)
@@ -105,5 +106,28 @@ class Rook < Piece
   end
 
   def valid_moves(current,target)
+    return rook_moves(current,target)
+  end
+end
+
+module RookMoves
+  def rook_moves(current,target)
+    x_diff=current[0]-target[0]
+    y_diff=current[1]-target[1]
+    if (x_diff!=0)&&(y_diff!=0); return false; end;
+    i,pos=1
+    if (x_diff<0)||(y_diff<0); i=-1; end;
+    if x_diff!=0;
+      while pos<x_diff.abs
+        if @owner.board[current[0]+i*pos][current[1]]!='#'; return false; end
+        pos+=1
+      end
+      return true
+    end
+    while pos<y_diff.abs
+      if @owner.board[current[0]+i*pos][current[1]]!='#'; return false; end
+      pos+=1
+    end
+    return true
   end
 end
