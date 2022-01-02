@@ -9,17 +9,8 @@ class Piece
   end
 
   def valid_moves(current,target)
-    if same_owner(current,target); return false; end
   end
 
-  def same_owner(current,target)
-    targ_sq=@owner.board[target[0]][target[1]]
-    if targ_sq=='#'; return true; end
-    if @owner.board[current[0]][current[1]].owner==@owner.board[target[0]][target[1]].owner;
-       return true;
-    end
-    false
-  end
 end
 
 
@@ -31,7 +22,6 @@ class Knight < Piece
     @icon="N"
   end
   def valid_moves(current,target)
-    if same_owner(current,target); return false; end
     x_diff=current[0]-target[0]
     y_diff=current[1]-target[1]
     if (x_diff==1||x_diff==-1)&&(y_diff==2||y_diff==-2) 
@@ -57,7 +47,6 @@ class King < Piece
     @icon="K"
   end
   def valid_moves(current,target)
-    if same_owner(current,target); return false; end
     x_diff=current[0]-target[0]
     if x_diff.abs>1; return false; end
     y_diff=current[1]-target[1]
@@ -73,7 +62,6 @@ class Bishop < Piece
   end
 
   def valid_moves(current,target)
-    if same_owner(current,target); return false; end
     x_diff=current[0]-target[0]
     y_diff=current[1]-target[1]
     if ((x_diff).abs)!=(y_diff).abs

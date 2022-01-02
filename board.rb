@@ -37,7 +37,17 @@ class Board
   end
 
 
+  def same_owner(current,target)
+    targ_sq=@board[target[0]][target[1]]
+    if targ_sq=='#'; return true; end
+    if @board[current[0]][current[1]].owner==@board[target[0]][target[1]].owner;
+       return true;
+    end
+    false
+  end
+
   def try_move(current,target)
+    if same_owner(current,target); return false; end
     return @board[current[0]][current[1]].valid_moves(current,target)
   end
 
