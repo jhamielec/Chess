@@ -5,8 +5,8 @@ class Board
   def initialize
     @board=Array.new(8)
     @board.each_with_index {|item,index| @board[index]=Array.new(8,'#')}
-    @white=Player.new(37,@board)
-    @black=Player.new(30,@board)
+    @white=Player.new(37,@board,"white")
+    @black=Player.new(30,@board,"black")
     @current_player=@white
     init_board()
   end
@@ -40,16 +40,24 @@ class Board
 
   def same_owner(current,target)
     targ_sq=@board[target[0]][target[1]]
-    if targ_sq=='#'; return true; end
+    if targ_sq=='#'; return false; end
     if @board[current[0]][current[1]].owner==@board[target[0]][target[1]].owner;
+      puts "same owner"
        return true;
     end
     false
   end
 
   def try_move(current,target)
+    if @board[current[0]][current[1]]!='#'
+      puts "#{current} #{@board[current[0]][current[1]].owner.color_name} #{@board[current[0]][current[1]].icon}"
+    end
+    if @board[target[0]][target[1]]!='#'
+      puts "#{target} #{@board[target[0]][target[1]].owner.color_name} #{@board[target[0]][target[1]].icon}"
+    end
     if same_owner(current,target); return false; end    
-    return @board[current[0]][current[1]].valid_moves(current,target)
+    if !@board[current[0]][current[1]].valid_moves(current,target); return false; end
+    return true;
   end
 
 
@@ -73,19 +81,23 @@ class Board
 end
 
 class Player
-  attr_reader :color,:board
+  attr_reader :color,:board,:color_name
   attr_accessor :king
-  def initialize(color_code,board)
+  def initialize(color_code,board,color_name)
     @color=color_code
     @board=board
+    @color_name=color_name
   end
 end
 
 
 board=Board.new
 board.draw_board
-puts board.try_move([7,2],[6,3])
-puts board.try_move([7,0],[4,0])
-puts board.try_move([7,0],[4,4])
-puts board.try_move([7,0],[7,1])
-
+# puts board.try_move([7,2],[6,3])
+# puts board.try_move([7,0],[4,0])
+# puts board.try_move([7,0],[4,4])
+puts board.try_move([7,6],[5,5])
+# puts board.try_move([7,0],[7,1])
+# puts board.try_move([7,0],[7,1])
+# puts board.try_move([7,0],[7,1])
+# puts board.try_move([7,0],[7,1])
