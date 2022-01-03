@@ -1,6 +1,7 @@
 class Piece
-  attr_reader :owner,:icon
-  def initialize(owner)
+  attr_reader :owner,:icon,:location
+  def initialize(owner,location)
+    @location=location
     @owner=owner
   end
 

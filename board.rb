@@ -40,11 +40,13 @@ class Board
   private def init_board()
     [0,7].each {|i|
       swap_players()
-      [0,7].each {|j| @board[i][j]=Rook.new(@current_player)}
-      [1,6].each {|j| @board[i][j]=Knight.new(@current_player)}
-      [2,5].each {|j| @board[i][j]=Bishop.new(@current_player)}
-      @board[i][3]=Queen.new(@current_player)
-      @board[i][4]=King.new(@current_player)
+      [0,7].each {|j| @board[i][j]=Rook.new(@current_player,[i,j]);@player.pieces.push(@board[i][j])}
+      [1,6].each {|j| @board[i][j]=Knight.new(@current_player,[i,j]);@player.pieces.push(@board[i][j])}
+      [2,5].each {|j| @board[i][j]=Bishop.new(@current_player,[i,j]);@player.pieces.push(@board[i][j])}
+      @board[i][3]=Queen.new(@current_player,[i,j])
+      @player.pieces.push(@board[i][3])
+      @board[i][4]=King.new(@current_player,[i,j])
+      @player.pieces.push(@board[i][4])
       @current_player.king=@board[i][4]
       }
     
@@ -149,6 +151,7 @@ class Player
     @color=color_code
     @board=board
     @color_name=color_name
+    @pieces=[]
   end
 end
 
