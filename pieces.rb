@@ -26,12 +26,12 @@ class Knight < Piece
     @icon="N"
   end
   def valid_moves(current,target)
-    x_diff=current[0]-target[0]
-    y_diff=current[1]-target[1]
-    if (x_diff==1||x_diff==-1)&&(y_diff==2||y_diff==-2) 
+    y_diff=target[0]-current[0]
+    x_diff=target[1]-current[1]
+    if (y_diff==1||y_diff==-1)&&(x_diff==2||x_diff==-2) 
       return true
     end
-    if (x_diff==2||x_diff==-2)&&(y_diff==1||y_diff==-1) 
+    if (y_diff==2||y_diff==-2)&&(x_diff==1||x_diff==-1) 
       return true
     end; 
     error_log("knight illegal")
@@ -47,25 +47,25 @@ class King < Piece
     @icon="K"
   end
   def valid_moves(current,target)
-    x_diff=current[0]-target[0]
-    if x_diff.abs>1; error_log("king x_diff");return false; end
-    y_diff=current[1]-target[1]
-    if y_diff.abs>1;  error_log("king y_diff"); return false; end
+    y_diff=current[0]-target[0]
+    if y_diff.abs>1; error_log("king y_diff");return false; end
+    x_diff=current[1]-target[1]
+    if x_diff.abs>1;  error_log("king x_diff"); return false; end
     return true
   end
 end
 
 module BishopMoves
   def bishop_moves(current,target)
-    x_diff=current[0]-target[0]
-    y_diff=current[1]-target[1]
-    if ((x_diff).abs)!=(y_diff).abs;  error_log("bishop off diagonal"); return false;end
+    y_diff=target[0]-current[0]
+    x_diff=target[1]-current[1]
+    if ((y_diff).abs)!=(x_diff).abs;  error_log("bishop off diagonal"); return false;end
     i=1
     j=1
-    if x_diff>0;i=-1; end
-    if y_diff>0; j=-1; end
+    if y_diff>0;i=-1; end
+    if x_diff>0; j=-1; end
     pos=1
-    while pos<x_diff.abs
+    while pos<y_diff.abs
       if @owner.board[current[0]+i*pos][current[1]+j*pos]!='#'
         error_log("piece between current and target")
         return false
@@ -95,11 +95,11 @@ class Pawn < Piece
   end
 
   def valid_moves(current,target)
-    color=@owner.color_code
+    color=@owner.color_name
     move=1
     if color=="white"; move=-1; end
-    x_diff=current[0]-target[0]
-    y_diff=current[1]-target[1]
+    y_diff=target[0]-current[0]
+    x_diff=target[1]-current[1]
     if (x_diff>1)||(x_diff<-1); error_log("#{color} pawn x_diff"); return false; end
     if (x_diff!=0)
       if @owner.board[target[0]][target[1]]=='#'; error_log("#{color} pawn can't attack empty"); return false; end
@@ -107,7 +107,9 @@ class Pawn < Piece
       return true
     end
     if (y_diff.abs>2); error_log("#{color} pawn y_diff"); return false; end
-    if (current[1]!=6)&&(y_diff!=move); error_log("#{color} pawn too far"); return false; end
+    if (current[0]!=(3.5-2.5*move))&&(y_diff!=move);
+      error_log("#{color} pawn too far"); return false; 
+    end
     if (y_diff==2*move);
       if (@owner.board[current[0]+move][current[1]]!='#')&&((@owner.board[current[0]+2*move][current[1]]!='#')); 
         error_log("#{color} illegal double pawn move"); 
@@ -115,11 +117,36 @@ class Pawn < Piece
       end
       return true
     end;
+    return true
+  end
+end
 
+module RookMoves
+  def rook_moves(current,target)
+    y_diff=target[0]-current[0]
+    x_diff=target[1]-current[1]
+    if (y_diff!=0)&&(x_diff!=0); error_log("rook off of xy axes"); return false; end;
+    pos=1
+    i=1
+    if (y_diff<0)||(x_diff<0); i=-1; end;
+    if y_diff!=0;
+      while pos<y_diff.abs
+        if @owner.board[current[0]+i*pos][current[1]]!='#'; error_log("rook vertical piece in way");
+          return false; end
+        pos+=1
+      end
+      return true
+    end
+    while pos<x_diff.abs
+      if @owner.board[current[0]+i*pos][current[1]]!='#'; error_log("rook horizontal piece in way"); return false; end
+      pos+=1
+    end
+    return true
   end
 end
 
 class Rook < Piece
+  include RookMoves
   def initialize(owner)
     super(owner)
     @icon="R"
@@ -127,28 +154,6 @@ class Rook < Piece
 
   def valid_moves(current,target)
     return rook_moves(current,target)
-  end
-end
-
-module RookMoves
-  def rook_moves(current,target)
-    x_diff=current[0]-target[0]
-    y_diff=current[1]-target[1]
-    if (x_diff!=0)&&(y_diff!=0); error_log("rook off of xy axes"); return false; end;
-    i,pos=1
-    if (x_diff<0)||(y_diff<0); i=-1; end;
-    if x_diff!=0;
-      while pos<x_diff.abs
-        if @owner.board[current[0]+i*pos][current[1]]!='#'; error_log("rook horizontal piece in way");return false; end
-        pos+=1
-      end
-      return true
-    end
-    while pos<y_diff.abs
-      if @owner.board[current[0]+i*pos][current[1]]!='#'; error_log("rook vertical piece in way"); return false; end
-      pos+=1
-    end
-    return true
   end
 end
 

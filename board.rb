@@ -37,30 +37,6 @@ class Board
     print "0 ABCDEFGH\n"
   end
 
-
-  def same_owner(current,target)
-    targ_sq=@board[target[0]][target[1]]
-    if targ_sq=='#'; return false; end
-    if @board[current[0]][current[1]].owner==@board[target[0]][target[1]].owner;
-      puts "same owner"
-       return true;
-    end
-    false
-  end
-
-  def try_move(current,target)
-    if @board[current[0]][current[1]]!='#'
-      puts "#{current} #{@board[current[0]][current[1]].owner.color_name} #{@board[current[0]][current[1]].icon}"
-    end
-    if @board[target[0]][target[1]]!='#'
-      puts "#{target} #{@board[target[0]][target[1]].owner.color_name} #{@board[target[0]][target[1]].icon}"
-    end
-    if same_owner(current,target); return false; end    
-    if !@board[current[0]][current[1]].valid_moves(current,target); return false; end
-    return true;
-  end
-
-
   private def init_board()
     [0,7].each {|i|
       swap_players()
@@ -78,6 +54,92 @@ class Board
         @board[i][j]=Pawn.new(@current_player)}}
   end
 
+  def convert_move(move)
+    x=move[0].ord-65
+    y=56-move[1].ord
+    [y,x]
+  end
+
+  def get_move(opt='')
+    return_arry=[]
+    while true
+      print "\nWhich piece would you like to move#{opt}? "
+      move=gets.tr("\n","")
+      if move.length!=2; puts "Not enough Letters";  next;  end
+      move.upcase!
+      if move[0]<'A'||move[0]>'H'; puts "Invalid Letter"; next; end
+      if move[1]<'1'||move[1]>'8'; puts "Invalid Number"; next; end
+      return convert_move(move)
+    end  
+  end
+  
+  def same_owner(current,target)
+    targ_sq=@board[target[0]][target[1]]
+    if targ_sq=='#'; return false; end
+    if @board[current[0]][current[1]].owner==@board[target[0]][target[1]].owner;
+      puts "same owner"
+      return true;
+    end
+    false
+  end
+
+  def not_current(move)
+    if @board[move[0]][move[1]]=='#'; return false; end
+    @current_player==@board[move[0]][move[1]].owner
+  end
+
+  def get_player_piece()
+    valid=false
+    while valid==false
+      move=get_move()
+      valid=not_current(move)
+      if !valid; puts "You must select one of your pieces.";end
+    end
+    return move
+  end
+
+  def get_player_target()
+    valid=false
+    while valid==false
+      move=get_move(" to")
+      valid=!not_current(move)
+      if !valid; puts "You must select a valid square."; end
+    end
+    return move
+  end
+
+  def update_board(current,target)
+    @board[target[0]][target[1]]=@board[current[0]][current[1]]
+    @board[current[0]][current[1]]='#'
+  end
+
+  def player_turn()
+    valid=false
+    while !valid
+      current=get_player_piece()
+      target=get_player_target()
+      valid=try_move(current,target)
+      puts valid
+    end
+    update_board(current,target)
+    draw_board()
+  end
+
+
+
+  def try_move(current,target)
+    # print "\n#{current} "
+    # if @board[current[0]][current[1]]!='#'
+    #   print "#{@board[current[0]][current[1]].owner.color_name} #{@board[current[0]][current[1]].icon}"
+    # end
+    # print "\n#{target} "
+    # if @board[target[0]][target[1]]!='#'
+    #   puts "#{@board[target[0]][target[1]].owner.color_name} #{@board[target[0]][target[1]].icon}"
+    # end
+    if same_owner(current,target); return false; end    
+    if !@board[current[0]][current[1]].valid_moves(current,target); return false; end
+    return true;
+  end
 end
 
 class Player
@@ -93,41 +155,4 @@ end
 
 board=Board.new
 board.draw_board
-
-def get_move(opt='')
-  return_arry=[]
-  while true
-    print "\nWhich piece would you like to move#{opt}? "
-    move=gets
-    if move.length!=2;  next; end
-    move.upcase!
-    if move[0]<'A'||move[0]>'H'; next; end
-    if move[1]<'1'||move[1]>'8'; next; end
-    x=move[0].ord-65
-    y=56-move[1].ord
-    puts [x,y]
-  end  
-end
-
-def player_move()
-  current=false
-  while current==false
-    current=get_move()
-  end
-  while target=false
-    target=get_move(" to")
-  end
-
-
-
-
-# puts board.try_move([7,2],[6,3])
-# puts board.try_move([7,0],[4,0])
-# puts board.try_move([7,0],[4,4])
-puts board.try_move([7,6],[5,5])
-
-get_move()
-# puts board.try_move([7,0],[7,1])
-# puts board.try_move([7,0],[7,1])
-# puts board.try_move([7,0],[7,1])
-# puts board.try_move([7,0],[7,1])
+board.player_turn
