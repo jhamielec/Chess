@@ -93,10 +93,40 @@ end
 
 board=Board.new
 board.draw_board
+
+def get_move(opt='')
+  return_arry=[]
+  while true
+    print "\nWhich piece would you like to move#{opt}? "
+    move=gets
+    if move.length!=2;  next; end
+    move.upcase!
+    if move[0]<'A'||move[0]>'H'; next; end
+    if move[1]<'1'||move[1]>'8'; next; end
+    x=move[0].ord-65
+    y=56-move[1].ord
+    puts [x,y]
+  end  
+end
+
+def player_move()
+  current=false
+  while current==false
+    current=get_move()
+  end
+  while target=false
+    target=get_move(" to")
+  end
+
+
+
+
 # puts board.try_move([7,2],[6,3])
 # puts board.try_move([7,0],[4,0])
 # puts board.try_move([7,0],[4,4])
 puts board.try_move([7,6],[5,5])
+
+get_move()
 # puts board.try_move([7,0],[7,1])
 # puts board.try_move([7,0],[7,1])
 # puts board.try_move([7,0],[7,1])
