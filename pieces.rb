@@ -1,5 +1,6 @@
 class Piece
-  attr_reader :owner,:icon,:location
+  attr_reader :owner,:icon
+  attr_accessor :location
   def initialize(owner,location)
     @location=location
     @owner=owner
@@ -13,17 +14,16 @@ class Piece
   end
 
   def error_log(string)
+    return
+    puts @location
     puts string
   end
 
 end
 
-
-
-
 class Knight < Piece
-  def initialize(owner)
-    super(owner)
+  def initialize(owner,location)
+    super(owner,location)
     @icon="N"
   end
   def valid_moves(current,target)
@@ -43,8 +43,8 @@ end
 
 
 class King < Piece
-  def initialize(owner)
-    super(owner)
+  def initialize(owner,location)
+    super(owner,location)
     @icon="K"
   end
   def valid_moves(current,target)
@@ -79,8 +79,8 @@ end
 
 class Bishop < Piece
   include BishopMoves
-  def initialize(owner)
-    super(owner)
+  def initialize(owner,location)
+    super(owner,location)
     @icon="B"
   end
 
@@ -90,8 +90,8 @@ class Bishop < Piece
 end
 
 class Pawn < Piece
-  def initialize(owner)
-    super(owner)
+  def initialize(owner,location)
+    super(owner,location)
     @icon="P"
   end
 
@@ -148,8 +148,8 @@ end
 
 class Rook < Piece
   include RookMoves
-  def initialize(owner)
-    super(owner)
+  def initialize(owner,location)
+    super(owner,location)
     @icon="R"
   end
 
@@ -161,8 +161,8 @@ end
 class Queen < Piece
   include RookMoves
   include BishopMoves
-  def initialize(owner)
-    super(owner)
+  def initialize(owner,location)
+    super(owner,location)
     @icon="Q"
   end
   def valid_moves(current,target)
